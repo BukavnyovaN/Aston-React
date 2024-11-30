@@ -14,7 +14,7 @@ export class MyChildClassComponent extends Component<MyChildClassComponentProps>
       <div className="submitted-value-card">
         <div className="submitted-value-icon">✉️</div>
         <div className="submitted-value-content">
-          <h3>Ваше сообщение</h3>
+          <h3>Your message: </h3>
           <p>{this.props.value}</p>
         </div>
       </div>
