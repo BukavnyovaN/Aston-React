@@ -1,11 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import { MyChildClassComponent } from "../my-child-class-component/my-child-class-component";
 
 import './my-class-component.css';
+import { MyFunctionComponent } from "../my-function-component/my-function-component";
 
 interface MyClassComponentState {
   inputValue: string;
   submittedValue: string;
+  isButtonDisabled: boolean;
 }
 
 export class MyClassComponent extends Component<{}, MyClassComponentState> {
@@ -13,9 +15,12 @@ export class MyClassComponent extends Component<{}, MyClassComponentState> {
     super(props);
     this.state = {
       inputValue: '',
-      submittedValue: ''
+      submittedValue: '',
+      isButtonDisabled: false
     };
   }
+
+  private inputRef = createRef<HTMLInputElement>();
 
   componentDidMount() {
     console.log('Компонент смонтирован.');
@@ -32,8 +37,17 @@ export class MyClassComponent extends Component<{}, MyClassComponentState> {
     console.log('Компонент будет размонтирован');
   }
 
+  handleInputFocus = (event: React.FormEvent) => {
+    event.preventDefault();
+    this.inputRef.current?.focus();
+  }
+
   handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ inputValue: event.target.value });
+    if(event.target.value.includes('реакт')) {
+      this.setState({isButtonDisabled: true, inputValue: event.target.value});
+    } else {
+      this.setState({isButtonDisabled: false, inputValue: event.target.value});
+    }
   }
 
   handleSubmit = (event: React.FormEvent) => {
@@ -49,6 +63,7 @@ export class MyClassComponent extends Component<{}, MyClassComponentState> {
       <div className="form-container">
         <form onSubmit={this.handleSubmit} className="form">
           <input
+            ref={this.inputRef}
             type="text"
             value={this.state.inputValue}
             onChange={this.handleInputChange}
@@ -58,11 +73,19 @@ export class MyClassComponent extends Component<{}, MyClassComponentState> {
           <button
             type="submit"
             className="form-button"
+            disabled={this.state.isButtonDisabled}
           >
-            {(!!this.state.submittedValue && !this.state.inputValue) ? 'Clear' : 'Submit' }
+            {(!!this.state.submittedValue && !this.state.inputValue) ? 'Clear' : 'Submit'}
+          </button>
+          <button
+            className="form-button focus"
+            onClick={this.handleInputFocus}
+          >
+            Focus on Input
           </button>
         </form>
         <MyChildClassComponent value={this.state.submittedValue}/>
+        <MyFunctionComponent value={this.state.submittedValue}/>
       </div>
     );
   }
